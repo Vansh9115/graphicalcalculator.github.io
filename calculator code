@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+ <head></head> 
+ <body> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <title></title> 
+  <style>
+   @import url("https://fonts.googleapis.com/css?family=Fira+Mono&display=swap");
+  
+    *{
+      margin:0px;
+      padding:0px;
+      background: #e9e9e9;
+      box-sizing: border-box;
+      font-family: "Fira Mono", monospace, sans-serif;
+      font-size:20px;
+    }
+    
+    body {
+      width:100vw;
+      height:100vh;
+      background:#e9e9e9;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    main {
+      width:330px;
+      height:500px;
+      padding:1.5rem;
+      margin:50px;
+      background:#e9e9e9;
+      border-radius:30px;
+      box-shadow: -6px -6px 9px #fff,
+                   6px  6px 9px #c0bcbc;
+    }
+    
+    input,
+    button {
+    outline: none;
+    }
+    
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    }
+    input[type="number"] {
+    -moz-appearance: textfield;
+    }
+    
+   input {
+       width:270px;
+       height:100px;
+       padding:20px 20px;
+       background:#e9e9e9;
+       text-align:right;
+       border:none;
+       outline: none;
+       border-radius:30px;
+       box-shadow:inset -3px -3px 8px #fff,
+                  inset  3px 3px 8px #c0bcbc;
+       text-shadow: -1px -1px 2px #fff, 2px 2px 2px rgba(0, 0, 0, 0.4);
+   }
+   
+   .keys {
+       display: grid;
+       grid-template-columns: repeat(4, 1fr);
+       grid-gap: 0.8rem;
+       margin-top: 20px;
+    }
+    
+    button {
+      width:50px;
+      height:50px;
+      border:none;
+      border-radius:50%;
+      outline:none;
+      background: #e9e9e9;
+      box-shadow: 6px 6px 12px #bababa,
+            -6px -6px 12px #ffffff;
+    }
+    button:hover {
+      background: linear-gradient(145deg, #f9f9f9, #d2d2d2);
+      }
+      
+    button:active {
+      background: linear-gradient(145deg, #f9f9f9, #d2d2d2);
+      box-shadow: inset 6px 6px 12px #bababa,
+      inset -6px -6px 12px #ffffff;
+      }
+      
+    .op__key {
+      color: #ff652f;
+      }
+    .eq__key {
+      color: #ff652f;
+    }
+    p{
+      color: #ff8640;
+    }
+    }
+  </style> 
+  <div class="field"> 
+   <h6 text align="center">complete neumorphic Calculator project by Vansh</h6>
+   <br> 
+   <p text align="center">May u like this <br> created: by Vansh</p> 
+   <main> 
+    <input type="number" value="0"> 
+    <div class="keys"> 
+     <button class="op__key" op="clear">C</button> 
+     <button class="op__key" op="negate">+/-</button> 
+     <button class="op__key" op="percent">%</button> 
+     <button class="op__key" op="divide">/</button> 
+     <button class="num__key">7</button> 
+     <button class="num__key">8</button> 
+     <button class="num__key">9</button> 
+     <button class="op__key" op="multiply">x</button> 
+     <button class="num__key">4</button> 
+     <button class="num__key">5</button> 
+     <button class="num__key">6</button> 
+     <button class="op__key" op="subtract">-</button> 
+     <button class="num__key">1</button> 
+     <button class="num__key">2</button> 
+     <button class="num__key">3</button> 
+     <button class="op__key" op="add">+</button> 
+     <span></span> 
+     <button class="num__key">0</button> 
+     <button class="num__key">.</button> 
+     <button class="eq__key">=</button> 
+    </div> 
+   </main> 
+   <script>
+    const $input = 
+    document.querySelector("input");
+    
+    document.querySelectorAll(".num__key").forEach(
+        el => {
+           el.onclick = () => $input.value = 
+    $input.value !== "0" ? $input.value +
+    el.innerText : el.innerText;
+        }
+    );
+    const buffer = []
+    const opCallback = opName => () => {
+       let currentVal =
+    parseFloat($input.value);
+     if (opName === "percent") {
+        currentVal *= 0.01;
+        $input.value = currentVal;
+    }
+    else {
+    if (buffer && buffer.length) {
+      buffer.push({ value: currentVal });
+      
+      const result = evaluate(buffer);
+    
+      buffer.push({ value: result });
+      buffer.push({ value: opName });
+    
+    $input.value = "";
+    }
+    else {
+         buffer.push({ value: currentVal });
+         buffer.push({ value: opName });
+         $input.value = "";
+       }
+      }
+     }
+     
+      const evaluate = buffer => {
+      const secondOperand = buffer.pop().value;
+      const operator = buffer.pop().value;
+      const firstOperand = buffer.pop().value;
+      switch (operator) {
+      case "add":
+        return firstOperand + secondOperand;
+        break;
+      case "subtract":
+        return firstOperand - secondOperand;
+        break;
+      case "multiply":
+        return firstOperand * secondOperand;
+        break;
+      case "divide":
+        return firstOperand / secondOperand;
+        break;
+      default:
+        return secondOperand;
+      }
+    }
+    
+      for (const opName of [ "add", "subtract", "multiply", "divide", "percent" ]) {
+      document.querySelector(`.op__key[op=${opName}]`).onclick =
+      opCallback(opName);
+      }
+      document.querySelector(".eq__key").onclick =
+      () => {
+      if (buffer && buffer.length) {
+      buffer.push({ value: parseFloat($input.value) });
+      $input.value = evaluate(buffer);
+      }
+      }
+      document.querySelector(".op__key[op=clear]").onclick =
+      () => {
+      $input.value = 0;
+      buffer.length = 0;
+      }
+      document.querySelector(".op__key[op=negate]").onclick =
+      () => $input.value = -parseFloat($input.value);
+  </script> 
+  </div> 
+ </body>
+</html>
